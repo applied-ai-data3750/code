@@ -1,4 +1,10 @@
-hey
+# readme.md
+
+## Plot
+
+![plot](figures/1663180426topics-by-hdbscan-clusters.png)
+
+## Enviroment Setup
 
 ```bash
 conda create -n intro-ai python=3.8
@@ -16,7 +22,7 @@ conda install pytorch -c pytorch
 conda install -c conda-forge -c plotly sentence-transformers umap-learn hdbscan plotly nbformat python-kaleido 
 
 
-# windows
+# windows oneliner
 conda create -n intro-ai python=3.8 ipykernel numpy pandas pytorch cudatoolkit=11.6 sentence-transformers umap-learn hdbscan plotly nbformat python-kaleido -c pytorch -c conda-forge -c plotly
 
 ```
