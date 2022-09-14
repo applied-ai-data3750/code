@@ -42,6 +42,12 @@ from hdbscan import HDBSCAN
 # topic finding
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+# stopwords to automate semi supervised topic finding
+import nltk
+nltk.download('stopwords')
+
+from nltk.corpus import stopwords
+
 # Loading model from pickle if possible, to avoid downloading it again
 try:
     model = pickle.load(open(f'data/model-{device}.pkl', 'rb'))
