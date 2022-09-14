@@ -2,7 +2,7 @@ from scripts.default_imports import *
 from scripts.topic_finding import *
 
 # when you actually cast the type here, then it works with how pandas casts types and you don't have to worry about copying seriers
-def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray) -> pd.DataFrame:
+def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None) -> pd.DataFrame:
   """
   Function to make a dataframe with the embeddings, cluster labels, topic per cluster label and titles.
 
@@ -20,7 +20,7 @@ def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: 
 
   result["cluster_label"] = cluster_labels
 
-  topic_dict = topic_by_clusterId(result)
+  topic_dict = topic_by_clusterId(result, bonus_words=bonus_words)
 
   result["topics"] = result["cluster_label"].apply(lambda x: topic_dict[x])
 
@@ -90,7 +90,7 @@ def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame) -> Tuple[go.S
 
   return trace_cluster, trace_outlier
 
-def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray) -> Tuple[go.Scattergl, go.Scattergl]:
+def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None) -> Tuple[go.Scattergl, go.Scattergl]:
   """
   Function to make a scatter traces of the clustered and outliers.
 
@@ -103,7 +103,7 @@ def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles:
       Tuple[go.Scattergl, go.Scattergl]: Tuple of two scatter traces.
   """
 
-  result = result_df_maker(uembs, cluster_labels, titles)
+  result = result_df_maker(uembs, cluster_labels, titles, bonus_words=bonus_words)
   clustered, outliers = result_splitter(result)
   trace_cluster, trace_outlier = result_tracer(clustered, outliers)
   return trace_cluster, trace_outlier
@@ -157,12 +157,12 @@ def fig_show_save(fig: go.Figure, filename: str, show=True):
       show (bool, optional): Option to disable showing of figure 
       (in case too big for notebook). Defaults to True.
   """
-
-  filename = str(time.time()) + filename
+  # adding directory and timestamp to filename
+  filename = f"figures/{int(time.time())}-{filename}"
   
   # writing both interactible .html and static image .png
-  fig.write_html(f"figures/{filename}.html")
-  fig.write_image(f"figures/{filename}.png")
+  fig.write_html(f"{filename}.html")
+  fig.write_image(f"{filename}.png")
 
   if show: 
     fig.show()
