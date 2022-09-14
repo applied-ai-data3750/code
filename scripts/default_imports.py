@@ -5,6 +5,8 @@ import re
 import numpy as np
 import pandas as pd
 
+import time
+
 # setting pandas options
 pd.set_option('display.max_colwidth', 200)
 
@@ -29,7 +31,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 # SBERT
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, util
 
 # UMAP
 from umap import UMAP

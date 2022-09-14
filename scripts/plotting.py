@@ -1,4 +1,5 @@
 from scripts.default_imports import *
+from scripts.topic_finding import *
 
 # when you actually cast the type here, then it works with how pandas casts types and you don't have to worry about copying seriers
 def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray) -> pd.DataFrame:
@@ -156,6 +157,8 @@ def fig_show_save(fig: go.Figure, filename: str, show=True):
       show (bool, optional): Option to disable showing of figure 
       (in case too big for notebook). Defaults to True.
   """
+
+  filename = str(time.time()) + filename
   
   # writing both interactible .html and static image .png
   fig.write_html(f"figures/{filename}.html")
