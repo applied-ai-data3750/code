@@ -1,6 +1,6 @@
 from scripts.default_imports import *
 
-def tfidf_most_relevant_word(input: list, num_words=5) -> list:
+def tfidf_most_relevant_word(input: list, num_words=5, bonus_words=None) -> list:
   """
   Function that finds the most relevant words per cluster id.
 
@@ -12,11 +12,17 @@ def tfidf_most_relevant_word(input: list, num_words=5) -> list:
       list: Returns a list of most relevant words, with lenght of unique cluster Ids
   """
 
+  if bonus_words: 
+    s_words = stopwords.words('english') + (bonus_words)
+  else:
+    s_words = stopwords.words('english')
+
+
   most_relevant_words = []
   
   for corpus in input:
         
-    vectorizer = TfidfVectorizer(stop_words='english')
+    vectorizer = TfidfVectorizer(stop_words=s_words)
     X = vectorizer.fit_transform(corpus)
     
     importance = np.argsort(np.asarray(X.sum(axis=0)).ravel())[::-1]
@@ -25,7 +31,7 @@ def tfidf_most_relevant_word(input: list, num_words=5) -> list:
 
   return most_relevant_words
 
-def topic_by_clusterId(result: pd.DataFrame) -> dict:
+def topic_by_clusterId(result: pd.DataFrame, bonus_words=None) -> dict:
   """
   Function that maps topics to cluster ids.
 
@@ -40,6 +46,6 @@ def topic_by_clusterId(result: pd.DataFrame) -> dict:
 
   df_group = result[["titles", "cluster_label"]].groupby("cluster_label").agg(list).reset_index()
 
-  df_group["topics"] = tfidf_most_relevant_word(df_group["titles"])
+  df_group["topics"] = tfidf_most_relevant_word(df_group["titles"], bonus_words=bonus_words)
 
   return dict(zip(df_group.cluster_label, df_group.topics))
