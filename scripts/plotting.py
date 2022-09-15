@@ -70,8 +70,8 @@ def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame) -> Tuple[go.S
     ), 
 
     # setting hover text to the titles of the videos
-    hovertemplate="<b>Topics:</b> %{customdata[0]} <br><b>Cluster Id:</b> %{customdata[1]}<extra></extra>", 
-    customdata=np.column_stack([clustered.topics, clustered.cluster_label]),
+    hovertemplate="<b>Commit Msg:</b> %{customdata[0]} <br><b>Topics:</b> %{customdata[1]} <br><b>Cluster Id:</b> %{customdata[2]}<extra></extra>", 
+    customdata=np.column_stack([clustered.titles, clustered.topics, clustered.cluster_label]),
   )
 
   trace_outlier = go.Scattergl(
@@ -158,11 +158,21 @@ def fig_show_save(fig: go.Figure, filename: str, show=True):
       (in case too big for notebook). Defaults to True.
   """
   # adding directory and timestamp to filename
-  filename = f"figures/{int(time.time())}-{filename}"
+  filename_newest = f"figures/newest-{filename}"
+  
+  filename_time = f"figures/{int(time.time())}-{filename}"
+
+
   
   # writing both interactible .html and static image .png
-  fig.write_html(f"{filename}.html")
-  fig.write_image(f"{filename}.png")
+  fig.write_html(f"{filename_time}.html")
+  fig.write_image(f"{filename_time}.png")
+
+  # also overwriting the "newest" image files to make easy to keep readme up to date
+  fig.write_html(f"{filename_newest}.html")
+  fig.write_image(f"{filename_newest}.png")
 
   if show: 
     fig.show()
+  else:
+    return fig

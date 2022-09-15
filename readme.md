@@ -2,7 +2,7 @@
 
 ## Plot
 
-![plot](figures/1663180426topics-by-hdbscan-clusters.png)
+![plot](figures/newest-topics-by-hdbscan-clusters.png)
 
 ## Enviroment Setup
 
