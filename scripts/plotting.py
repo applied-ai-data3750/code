@@ -20,7 +20,7 @@ def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: 
 
   result["cluster_label"] = cluster_labels
 
-  topic_dict = topic_by_clusterId(result, bonus_words=bonus_words)
+  topic_dict = topic_by_clusterId(text=result["titles"].to_numpy(), cluster_label=result["cluster_label"].to_numpy(), bonus_words=bonus_words)
 
   result["topics"] = result["cluster_label"].apply(lambda x: topic_dict[x])
 
