@@ -2,6 +2,9 @@
 
 ## Plot
 
+See [this file](figures/animation/animation_week.html) to see an animation of how topics get activity over time, in weekly slices
+
+
 ![plot](figures/newest-topics-by-hdbscan-clusters.png)
 
 ## Enviroment Setup
