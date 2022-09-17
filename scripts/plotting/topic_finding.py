@@ -1,4 +1,7 @@
-from scripts.default_imports import *
+import numpy as np
+import pandas as pd
+
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def tfidf_most_relevant_word(input: list, num_words=5, bonus_words=None) -> list:
   """
@@ -13,9 +16,9 @@ def tfidf_most_relevant_word(input: list, num_words=5, bonus_words=None) -> list
   """
 
   if bonus_words: 
-    s_words = stopwords.words('english') + (bonus_words)
+    s_words = bonus_words
   else:
-    s_words = stopwords.words('english')
+    s_words = 'english'
 
 
   most_relevant_words = []

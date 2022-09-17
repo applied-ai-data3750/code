@@ -1,4 +1,4 @@
-from scripts.default_imports import *
+import re
 
 def string_cleaner(input: str) -> str:
     """

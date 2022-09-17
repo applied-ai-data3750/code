@@ -1,5 +1,13 @@
-from scripts.default_imports import *
-from scripts.topic_finding import *
+import numpy as np
+import pandas as pd
+from typing import Tuple
+import time
+
+import plotly.graph_objects as go
+import plotly.express as px
+from plotly.subplots import make_subplots
+
+from .topic_finding import *
 
 # when you actually cast the type here, then it works with how pandas casts types and you don't have to worry about copying seriers
 def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None) -> pd.DataFrame:

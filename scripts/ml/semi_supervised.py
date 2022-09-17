@@ -1,4 +1,7 @@
-from scripts.default_imports import *
+import numpy as np
+import pandas as pd
+from sentence_transformers import SentenceTransformer, util
+
 
 def interest_fixer(interests: str) -> list:
   interests = re.split(", |\n", interests)

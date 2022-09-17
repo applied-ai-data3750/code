@@ -1,21 +1,20 @@
-# regex
+# regex, time, Tuple return type, pickle for object dumping
 import re
+import time
+from typing import Tuple
+import pickle
 
-# pandas + numpy
+# to ignore warnings
+import warnings
+warnings.filterwarnings('ignore')
+
+# data handling
 import numpy as np
 import pandas as pd
-
-import time
 
 # setting pandas options
 pd.set_option('display.max_colwidth', 200)
 
-
-# storing and loading models
-import pickle
-
-# to set types for functions
-from typing import Tuple
 
 # Plotting
 import plotly.graph_objects as go
@@ -29,24 +28,28 @@ import torch
 # setting device to use GPU for NLP backend if you have GPU available
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-
-# SBERT
+# ML
 from sentence_transformers import SentenceTransformer, util
-
-# UMAP
 from umap import UMAP
-
-#HDBSCAN
 from hdbscan import HDBSCAN
-
-# topic finding
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+
 
 # stopwords to automate semi supervised topic finding
 import nltk
-nltk.download('stopwords')
-
 from nltk.corpus import stopwords
+
+try:
+    # seeing if stopwords are already downloaded
+    nltk.data.find('corpora/stopwords')
+    local_stopwords = True
+except:
+    # downloading stopwords if not already downloaded
+    nltk.download('stopwords')
+    local_stopwords = False
+
+
 
 # Loading model from pickle if possible, to avoid downloading it again
 try:
@@ -61,6 +64,7 @@ except:
     model_load = False
 
 print(f"""
+Local stopwords:        {local_stopwords}
 GPUs detected:          {torch.cuda.device_count()}
 Using GPU:              {torch.cuda.is_available()}
 Device:                 {device}
