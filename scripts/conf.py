@@ -28,3 +28,23 @@ if conf["fresh_data"]:
     conf["fresh_uembs"] = True
     conf["fresh_s_embs"] = True
     conf["fresh_s_uembs"] = True
+
+names = {
+    "model-cpu" : "model-cpu.pkl",
+    "model-cuda" : "model-cuda.pkl",
+
+    "bonus-words": "bonus-words.pkl",
+    "df" : "df.pkl",
+    "dfres" : "dfres.pkl",
+    
+    "embs-cuda" : "embs-cuda.pkl",
+    "embs-cpu" : "embs-cpu.pkl",
+    
+    "uembs-cuda" : "uembs-cuda.pkl",
+    "uembs-cpu" : "uembs-cpu.pkl",
+    "uembs-s-cuda" : "uembs-s-cuda.pkl",
+    "uembs-s-cpu" : "uembs-s-cpu.pkl",
+}
+
+for k, v in names.items():
+    names[k] = f"data/{v}"

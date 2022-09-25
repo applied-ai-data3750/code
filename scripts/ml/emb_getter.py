@@ -2,7 +2,7 @@ import pickle
 
 def sbert_emb_getter(data_column, filename='model-cuda'):
   # getting fresh model just in case this helps
-  temp_model = pickle.load( open( f"data/{filename}-{device}.pkl", "rb" ) )
+  temp_model = pickle.load( open( filename, "rb" ) )
   
   # getting the embs here, hoping that this will remove the bloated model object post encodings
   semb = temp_model.encode(data_column)
