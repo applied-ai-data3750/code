@@ -1,7 +1,7 @@
 conf = {
 
     # to signal if there is new data
-    "fresh_data" : False,
+    "fresh_data" : True,
 
     # if you want to show figures when running the script
     "show_figs": True,
