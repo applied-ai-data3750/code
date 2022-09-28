@@ -10,7 +10,7 @@ from plotly.subplots import make_subplots
 from .topic_finding import *
 
 # when you actually cast the type here, then it works with how pandas casts types and you don't have to worry about copying seriers
-def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None) -> pd.DataFrame:
+def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None, interest_words=None) -> pd.DataFrame:
   """
   Function to make a dataframe with the embeddings, cluster labels, topic per cluster label and titles.
 
@@ -20,7 +20,7 @@ def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: 
       titles (np.ndarray): array of titles.
 
   Returns:
-      pd.DataFrame: Dataframe with embeddings, cluster labels, topics per cluster, and titles.
+      pd.DataFrame: Dataframe with embeddings, cluster labels, group_topics per cluster, and titles.
   """
   result = pd.DataFrame(embeddings, columns=['x', 'y'])
 
@@ -28,11 +28,18 @@ def result_df_maker(embeddings: np.ndarray, cluster_labels: np.ndarray, titles: 
 
   result["cluster_label"] = cluster_labels
 
-  topic_dict = topic_by_clusterId(text=result["titles"].to_numpy(), cluster_label=result["cluster_label"].to_numpy(), bonus_words=bonus_words)
+  if interest_words: result["interest_words"] = interest_words
 
-  result["topics"] = result["cluster_label"].apply(lambda x: topic_dict[x])
+  topic_dict = topic_by_clusterId(text=result["titles"].to_numpy(), cluster_label=result["cluster_label"].to_numpy(), bonus_words=bonus_words, interest_words=interest_words)
 
-  result["topics"] = result["topics"].apply(lambda x: " ".join(x))
+  if interest_words:
+    result["group_topics"] = result["interest_words"].apply(lambda x: topic_dict[x])
+
+  else:
+    result["group_topics"] = result["cluster_label"].apply(lambda x: topic_dict[x])
+
+
+  result["group_topics"] = result["group_topics"].apply(lambda x: " ".join(x))
 
   return result
 
@@ -41,7 +48,7 @@ def result_splitter(result: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
   Function to split the dataframe into two dataframes, one for clustered and one for outliers.
 
   Args:
-      result (pd.DataFrame): Dataframe with embeddings, cluster labels, topics per cluster, and titles.
+      result (pd.DataFrame): Dataframe with embeddings, cluster labels, group_topics per cluster, and titles.
 
   Returns:
       Tuple[np.ndarray, np.ndarray]: Tuple of two dataframes, one for clustered and one for outliers.
@@ -52,7 +59,7 @@ def result_splitter(result: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
   return clustered, outliers
 
 # the cavalry is not here, but it's fine! Why? I am here!
-def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame) -> Tuple[go.Scattergl, go.Scattergl]:
+def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame, interest_words=None) -> Tuple[go.Scattergl, go.Scattergl]:
   """
   Function to make a scatter traces of the clustered and outliers.
 
@@ -64,6 +71,24 @@ def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame) -> Tuple[go.S
       Tuple[go.Scattergl, go.Scattergl]: Tuple of two scatter traces.
   """
 
+
+
+  if not interest_words:
+    hover_template = "<b>Commit Msg:</b> %{customdata[0]} <br><b>Group Topics:</b> %{customdata[1]} <br><b>Cluster Id:</b> %{customdata[2]}<extra></extra>"
+    custom_data = np.column_stack([clustered.titles, clustered.group_topics, clustered.cluster_label])
+    clustered["color_col"] = clustered.cluster_label
+
+  else:
+    cluster_id_dict = {}
+    for i, word in enumerate(set(list(clustered.interest_words))):
+      cluster_id_dict[word] = i
+
+    clustered["interest_id"] = clustered.interest_words.apply(lambda x: cluster_id_dict[x])
+
+    hover_template = "<b>Commit Msg:</b> %{customdata[0]} <br><b>Traget Interest:</b> %{customdata[1]} <br><b>Group Topics:</b> %{customdata[2]} <br><b>Cluster Id:</b> %{customdata[3]}<extra></extra>"
+    custom_data = np.column_stack([clustered.titles, clustered.interest_words, clustered.group_topics, clustered.cluster_label])
+    clustered["color_col"] = clustered.interest_id
+
   trace_cluster = go.Scattergl(
     x=clustered.x, 
     y=clustered.y, 
@@ -73,13 +98,13 @@ def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame) -> Tuple[go.S
     # styling markers
     marker=dict(
       size=2, 
-      color=clustered.cluster_label,
+      color=clustered.color_col,
       colorscale="Rainbow"
     ), 
 
     # setting hover text to the titles of the videos
-    hovertemplate="<b>Commit Msg:</b> %{customdata[0]} <br><b>Topics:</b> %{customdata[1]} <br><b>Cluster Id:</b> %{customdata[2]}<extra></extra>", 
-    customdata=np.column_stack([clustered.titles, clustered.topics, clustered.cluster_label]),
+    hovertemplate=hover_template, 
+    customdata=custom_data,
   )
 
   trace_outlier = go.Scattergl(
@@ -98,7 +123,7 @@ def result_tracer(clustered: pd.DataFrame, outliers: pd.DataFrame) -> Tuple[go.S
 
   return trace_cluster, trace_outlier
 
-def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None) -> Tuple[go.Scattergl, go.Scattergl]:
+def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles: np.ndarray, bonus_words=None, interest_words=None) -> Tuple[go.Scattergl, go.Scattergl]:
   """
   Function to make a scatter traces of the clustered and outliers.
 
@@ -111,9 +136,9 @@ def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles:
       Tuple[go.Scattergl, go.Scattergl]: Tuple of two scatter traces.
   """
 
-  result = result_df_maker(uembs, cluster_labels, titles, bonus_words=bonus_words)
+  result = result_df_maker(uembs, cluster_labels, titles, bonus_words=bonus_words, interest_words=interest_words)
   clustered, outliers = result_splitter(result)
-  trace_cluster, trace_outlier = result_tracer(clustered, outliers)
+  trace_cluster, trace_outlier = result_tracer(clustered, outliers, interest_words=interest_words)
   return trace_cluster, trace_outlier
 
 def subplotter(trace_nested_list: list, titles: list, base_size=1000) -> go.Figure:

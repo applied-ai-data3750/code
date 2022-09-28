@@ -34,6 +34,7 @@ names = {
     "model-cuda" : "model-cuda.pkl",
 
     "bonus-words": "bonus-words.pkl",
+    "target-interest-list": "target-interest-list.pkl",
     "df" : "df.pkl",
     "dfres" : "dfres.pkl",
     

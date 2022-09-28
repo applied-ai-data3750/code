@@ -34,7 +34,7 @@ def tfidf_most_relevant_word(input: list, num_words=5, bonus_words=None) -> list
 
   return most_relevant_words
 
-def topic_by_clusterId(text: np.ndarray, cluster_label: np.ndarray, bonus_words=None) -> dict:
+def topic_by_clusterId(text: np.ndarray, cluster_label: np.ndarray, bonus_words=None, interest_words=None) -> dict:
   """
   Function that maps topics to cluster ids.
 
@@ -49,8 +49,19 @@ def topic_by_clusterId(text: np.ndarray, cluster_label: np.ndarray, bonus_words=
 
   df_group = pd.DataFrame({"cluster_label": cluster_label, "text": text})
 
-  df_group = df_group[["text", "cluster_label"]].groupby("cluster_label").agg(list).reset_index()
+  if interest_words:
+    df_group["interest_word"] = interest_words
+    df_group = df_group[["text", "cluster_label", "interest_word"]].groupby("interest_word").agg(list).reset_index()
+  
+  else:
+    df_group = df_group[["text", "cluster_label"]].groupby("cluster_label").agg(list).reset_index()
+
+
 
   df_group["topics"] = tfidf_most_relevant_word(df_group["text"], bonus_words=bonus_words)
 
-  return dict(zip(df_group.cluster_label, df_group.topics))
+  if interest_words:
+    return dict(zip(df_group.interest_word, df_group.topics))
+  
+  else:
+    return dict(zip(df_group.cluster_label, df_group.topics))
