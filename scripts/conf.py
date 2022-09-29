@@ -4,7 +4,7 @@ conf = {
     "fresh_data" : True,
 
     # if you want to show figures when running the script
-    "show_figs": True,
+    "show_figs": False,
 
     # ammount of interest words for semi supervised
     "interest_words": 20,
