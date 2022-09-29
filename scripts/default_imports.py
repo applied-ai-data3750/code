@@ -30,8 +30,17 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # ML
 from sentence_transformers import SentenceTransformer, util
-from umap import UMAP
-from hdbscan import HDBSCAN
+
+try:
+    from cuml import UMAP
+    from cuml import HDBSCAN
+    #from hdbscan import HDBSCAN
+    using_cuml = True
+except:
+    from umap import UMAP
+    from hdbscan import HDBSCAN
+    using_cuml = False
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
@@ -68,5 +77,6 @@ Local stopwords:        {local_stopwords}
 GPUs detected:          {torch.cuda.device_count()}
 Using GPU:              {torch.cuda.is_available()}
 Device:                 {device}
+Using cuML:             {using_cuml}
 Got model from pickle:  {model_load}
 """)
