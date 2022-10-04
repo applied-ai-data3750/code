@@ -1,4 +1,4 @@
-name: rapids-39
+name: rapids
 channels:
   - pytorch
   - nvidia
