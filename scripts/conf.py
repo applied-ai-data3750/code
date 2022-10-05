@@ -34,9 +34,14 @@ names = {
     "model-cuda" : "model-cuda.pkl",
 
     "bonus-words": "bonus-words.pkl",
+    "target-interests" : "target-interests.pkl",
     "target-interest-list": "target-interest-list.pkl",
+
     "df" : "df.pkl",
     "dfres" : "dfres.pkl",
+    "df-user" : "df-user.pkl",
+    "df-user-group" : "df-user-group.pkl",
+
     
     "embs-cuda" : "embs-cuda.pkl",
     "embs-cpu" : "embs-cpu.pkl",
