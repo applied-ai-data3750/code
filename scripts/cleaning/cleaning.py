@@ -14,7 +14,7 @@ def string_cleaner(input: str) -> str:
     # turning lowercase
     input = input.lower()
 
-    input = re.sub(r'\-', ' ', input)
+    input = re.sub(r'\-|\_', ' ', input)
 
     # removing punctuation and other non-alphanumeric characters
     input = re.sub(r'[^\w\s]', '', input)

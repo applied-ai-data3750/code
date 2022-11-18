@@ -137,12 +137,18 @@ def result_tracer_wrapper(uembs: np.ndarray, cluster_labels: np.ndarray, titles:
   """
 
   result = result_df_maker(uembs, cluster_labels, titles, bonus_words=bonus_words, interest_words=interest_words)
-  if not interest_words:
-    clustered, outliers = result_splitter(result)
-  else:
-    clustered = result
-    outliers = pd.DataFrame(columns=result.columns)
+  
+  # if not interest_words:
+  #   clustered, outliers = result_splitter(result)
+  # else:
+  #   clustered = result
+  #   outliers = pd.DataFrame(columns=result.columns)
+
+  clustered, outliers = result_splitter(result)
+
+
   trace_cluster, trace_outlier = result_tracer(clustered, outliers, interest_words=interest_words)
+  
   return trace_cluster, trace_outlier
 
 def subplotter(trace_nested_list: list, titles: list, base_size=1000) -> go.Figure:
